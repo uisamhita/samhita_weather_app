@@ -5,7 +5,9 @@ import { useEffect, useState } from "react";
 import Loader from "../CommonComponents/Loader";
 
 const WeatherForecast = () => {
-  const days = [1, 2, 3, 4, 5];
+  const API_KEY = process.env.REACT_APP_API_KEY; // Add in local .env file
+
+  const appId = "15ca787f2d191cf1f09525804a2ce85d";
 
   const [city, setCity] = useState("");
   const [dataError, setDataError] = useState(null);
@@ -22,14 +24,15 @@ const WeatherForecast = () => {
     if (city) {
       axios
         .get(
-          `https://api.openweathermap.org/data/2.5/forecast?appid=15ca787f2d191cf1f09525804a2ce85d&q=${city}`
+          // `https://api.openweathermap.org/data/2.5/forecast?appid=${API_KEY}&q=${city}`
+          `https://api.openweathermap.org/data/2.5/forecast?appid=${appId}&q=${city}`
         )
         .then((resp) => {
+          setDataError(null);
+          // Get Data for UNique Date. Means Per day only one record
           const uniqueDates = resp.data.list.reduce((acc, current) => {
-            // Extract just the date portion (YYYY-MM-DD) from dt_txt
             const date = current.dt_txt.split(" ")[0];
 
-            // If the date is not already in the accumulator, add it
             if (!acc.some((item) => item.dt_txt.split(" ")[0] === date)) {
               acc.push(current);
             }
@@ -44,9 +47,10 @@ const WeatherForecast = () => {
           console.log(resp.data.list);
         })
         .catch((error) => {
-            setDataError(error.response.data.message);
+          setDataError(error.response.data.message);
         });
     } else {
+      setWeatherData(null);
     }
     setLoader(false);
   }
@@ -59,7 +63,6 @@ const WeatherForecast = () => {
 
   return (
     <Container fluid>
-      
       <Row className="py-5">
         <Col md={6}>
           <h3 className="app-heading">Weather in your city</h3>
@@ -92,42 +95,43 @@ const WeatherForecast = () => {
         </Col>
       </Row>
       <div className="weather-card-outer">
-        {weatherData?.slice(0, 5).map((day, index) => {
-          return (
-            <div className="weather-card" key={index}>
-              <table className="table table-bordered">
-                <thead className="bg-warning text-white">
-                  <tr>
-                    <th colSpan="2">Date: {formattedDate(day.dt_txt)}</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr className="grey-bg">
-                    <td colSpan="2">Temperature</td>
-                  </tr>
-                  <tr className="grey-bg">
-                    <td>Min</td>
-                    <td>Max</td>
-                  </tr>
-                  <tr className="grey-bg">
-                    <td>{day.main.temp_min}</td>
-                    <td>{day.main.temp_max}</td>
-                  </tr>
-                  <tr>
-                    <td>Pressure</td>
-                    <td>{day.main.pressure}</td>
-                  </tr>
-                  <tr>
-                    <td>Humidity</td>
-                    <td>{day.main.humidity}</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          );
-        })}
+        {!dataError &&
+          weatherData?.slice(0, 5).map((day, index) => {
+            return (
+              <div className="weather-card" key={index}>
+                <table className="table table-bordered">
+                  <thead className="bg-warning text-white">
+                    <tr>
+                      <th colSpan="2">Date: {formattedDate(day.dt_txt)}</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr className="grey-bg">
+                      <td colSpan="2">Temperature</td>
+                    </tr>
+                    <tr className="grey-bg">
+                      <td>Min</td>
+                      <td>Max</td>
+                    </tr>
+                    <tr className="grey-bg">
+                      <td>{day.main.temp_min}</td>
+                      <td>{day.main.temp_max}</td>
+                    </tr>
+                    <tr>
+                      <td>Pressure</td>
+                      <td>{day.main.pressure}</td>
+                    </tr>
+                    <tr>
+                      <td>Humidity</td>
+                      <td>{day.main.humidity}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            );
+          })}
 
-        {!weatherData && <p className="text-center">{dataError}</p>}
+        {dataError && <p className="text-center">{dataError}</p>}
       </div>
     </Container>
   );
