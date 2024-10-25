@@ -1,0 +1,73 @@
+$primaryColor: #ff9933;
+$secondaryColor:  #cdcdcd;
+ 
+.text-center {
+  text-align: center;
+}
+
+.grey-bg {
+    background: $secondaryColor;
+}
+
+.app-heading {
+    text-align: left;
+    color: $primaryColor;
+}
+
+.weather-card-outer {
+  text-align: center;
+  margin: 10px 0;
+  display: flex;
+  column-gap: 2rem;
+  width: 100%;
+  flex-wrap: wrap;
+
+  .weather-card {
+    flex: 1 0;
+    width: 100%;
+
+    table {
+      th {
+        background: $primaryColor;
+      }
+    }
+  }
+
+  table {
+    border: 1px solid #000000;
+
+    .grey-bg {
+        td {
+            background: $secondaryColor;
+        }
+    }
+  }
+}
+
+.search-block {
+    width: 50% !important;
+}
+
+@media (max-width: 767px) {
+    .search-block {
+        width: 100% !important;
+        display: block !important;
+
+        input {
+            width: 100% !important;
+            margin-bottom: 10px;
+        }
+    }
+
+    .app-heading {
+        text-align: center;
+    }
+
+
+  .weather-card-outer {
+    .weather-card {
+      min-width: 100%;
+      width: 100%;
+    }
+  }
+}
